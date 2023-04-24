@@ -6,7 +6,7 @@ const cors = require('cors')
 app.use(express.json())
 app.use(cors())
 
-app.get('/', (req, res) => {
+app.post('/token', (req, res) => {
     const {
         grant_type,
         client_id,
@@ -49,6 +49,24 @@ app.get('/', (req, res) => {
     })
 })
 
+
+app.get('/resource', (req, res) => {
+    const auth = req.headers['authorization']
+    const body = req.body
+
+    const regex = new RegExp(/Bearer .*/gm)
+    const validToken = auth && regex.test(auth)
+    
+    if(validToken) {
+        res.send({
+            body
+        })
+    } else {
+        res.status(401).send({
+            error: "Unauthorized"
+        })
+    }
+})
 
 const make_token = (length) => {
     let result = '';
